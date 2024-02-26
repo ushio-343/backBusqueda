@@ -37,14 +37,20 @@ def register(user: UserData):
     except:
         raise HTTPException(status_code=400, detail="Failed to create user")
 
+
+from fastapi import HTTPException
+
+from fastapi import HTTPException
+
+
 @app.post("/search")
 def search(data: SearchData):
-    # Convertir los valores a minúsculas para una búsqueda insensible a mayúsculas y minúsculas
-    valor_minuscula = data.valor.lower()
-    campo_minuscula = df[data.campo].str.lower()
+    # Obtener el valor y el campo especificados en la solicitud
+    valor = str(data.valor)
+    campo = data.campo
 
-    # Filtrar los registros que comienzan exactamente con el valor en el campo especificado
-    registros = df[campo_minuscula.str.contains(valor_minuscula, na=False)]
+    # Filtrar los registros que contienen el valor en el campo especificado
+    registros = df[df[campo].astype(str).str.contains(valor)]
 
     # Si no se encontraron registros, regresar un mensaje indicando esto
     if registros.empty:
@@ -55,3 +61,5 @@ def search(data: SearchData):
 
     # Si se encontraron registros, regresar estos
     return registros_json
+
+
